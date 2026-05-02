@@ -1,0 +1,40 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const posts = (await getCollection("posts"))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const postUrl = (id: string) => `/posts/${id.replace(/\.mdx?$/, "")}/`;
+---
+
+<BaseLayout title="文章" description="所有文章。">
+  <section class="page-head">
+    <h1>文章</h1>
+    <p>一些记录、想法和慢慢长出来的东西。</p>
+  </section>
+
+  <section class="post-list">
+    {
+      posts.map((post) => (
+        <article class="post-item">
+          <a href={postUrl(post.id)}>
+            <h2>{post.data.title}</h2>
+            <p>{post.data.description}</p>
+            <div class="post-meta">
+              <time datetime={post.data.pubDate.toISOString()}>
+                {post.data.pubDate.toLocaleDateString("zh-CN", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric"
+                })}
+              </time>
+              {post.data.tags.length > 0 && <span>{post.data.tags.join(" / ")}</span>}
+            </div>
+          </a>
+        </article>
+      ))
+    }
+  </section>
+</BaseLayout>

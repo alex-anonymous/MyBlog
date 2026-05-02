@@ -1,0 +1,47 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const posts = (await getCollection("posts"))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 5);
+
+const postUrl = (id: string) => `/posts/${id.replace(/\.mdx?$/, "")}/`;
+---
+
+<BaseLayout title="MyBlog" description="一个个人网站和写作空间。">
+  <section class="hero">
+    <p class="eyebrow">Personal writing space</p>
+    <h1>把灯留着</h1>
+    <p class="intro">
+      为尚未抵达的句子，和迟些回来的自己。
+    </p>
+  </section>
+
+  <section class="section">
+    <div class="section-heading">
+      <h2>最近文章</h2>
+      <a href="/posts/">查看全部</a>
+    </div>
+    <div class="post-list">
+      {
+        posts.map((post) => (
+          <article class="post-item">
+            <a href={postUrl(post.id)}>
+              <h3>{post.data.title}</h3>
+              <p>{post.data.description}</p>
+              <time datetime={post.data.pubDate.toISOString()}>
+                {post.data.pubDate.toLocaleDateString("zh-CN", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric"
+                })}
+              </time>
+            </a>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>
