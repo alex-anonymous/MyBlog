@@ -56,7 +56,7 @@ const pageTitle = title === siteTitle ? siteTitle : `${title} | ${siteTitle}`;
 
       const renderMermaidBlocks = async () => {
         const blocks = document.querySelectorAll(
-          "pre > code.language-mermaid, pre > code.lang-mermaid"
+          'pre[data-language="mermaid"] > code, pre > code.language-mermaid, pre > code.lang-mermaid'
         );
 
         for (const [index, block] of [...blocks].entries()) {
